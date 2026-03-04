@@ -1,0 +1,21 @@
+module alu_riscv (
+    input [31:0] a, b,
+    input [9:0] ctrl, // Vector de 10 bits: {add, sub, sll, slt, sltu, xor, srl, sra, or, and}
+    output reg [31:0] out
+);
+    always @(*) begin
+        case (ctrl)
+            10'b1000000000: out = a + b;         // add
+            10'b0100000000: out = a - b;         // sub
+            10'b0010000000: out = a << b[4:0];   // sll
+            10'b0001000000: out = ($signed(a) < $signed(b)) ? 32'b1 : 32'b0; // slt
+            10'b0000100000: out = (a < b) ? 32'b1 : 32'b0; // sltu
+            10'b0000010000: out = a ^ b;         // xor
+            10'b0000001000: out = a >> b[4:0];   // srl
+            10'b0000000100: out = $signed(a) >>> b[4:0]; // sra
+            10'b0000000010: out = a | b;         // or
+            10'b0000000001: out = a & b;         // and
+            default:        out = 32'b0;
+        endcase
+    end
+endmodule
