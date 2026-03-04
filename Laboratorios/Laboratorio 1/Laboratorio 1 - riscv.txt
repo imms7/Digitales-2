@@ -1,0 +1,111 @@
+Laboratorio 1 - riscv
+
+module my_riscv (
+    input clk,          // Reloj del procesador
+    input rst,          // Reset del procesador
+    input [31:0] instr  // Instrucción de entrada
+);
+
+    reg [31:0] IR;      // Registro de instrucción
+
+    always @(posedge clk) begin
+        if (rst) IR <= 32'b0;
+        else     IR <= instr;
+    end
+
+    // --- Extracción de los campos del registro de instrucción (IR) ---
+    wire [6:0] funct7;
+    wire [4:0] rs2;
+    wire [4:0] rs1;
+    wire [2:0] funct3;
+    wire [4:0] rd;
+    wire [6:0] opcode;
+
+    assign funct7 = IR[31:25];
+    assign rs2    = IR[24:20];
+    assign rs1    = IR[19:15];
+    assign funct3 = IR[14:12];
+    assign rd     = IR[11:7];
+    assign opcode = IR[6:0];
+
+    // --- Salidas del Register File (RF) ---
+    wire [31:0] src1_value;
+    wire [31:0] src2_value;
+
+    // --- Operandos de entrada a la ALU ---
+    wire [31:0] alu_a;
+    wire [31:0] alu_b;
+
+    // --- Salida de la ALU ---
+    wire [31:0] alu_out;
+
+    // --- Señales de control de la unidad de control (CU) ---
+    wire wr_en;
+    wire [10:0] dec_bits;
+    wire is_add, is_sub, is_sll, is_slt, is_sltu, is_xor, is_srl, is_sra, is_or, is_and;
+
+    // Nuevas señales para tipos de instrucción
+    wire is_r_instr;
+    wire is_i_instr;
+    wire is_s_instr;
+    wire is_b_instr;
+    wire is_u_instr;
+    wire is_j_instr;
+    wire is_valid; //---------------------------------------------------------------------
+
+    // --- Instanciación del Register File (RF) ---
+  register_file rv_rf (
+    .clk(clk),
+    .wr_en(wr_en),
+    .wr_index(rd),
+    .wr_data(alu_out),
+    .rd_index1(rs1),
+    .rd_data1(src1_value),
+    .rd_index2(rs2),
+    .rd_data2(src2_value)
+ );
+
+    // --- Cableado entre el RF y la ALU ---
+    assign alu_a = src1_value;
+    assign alu_b = src2_value;
+
+    // --- Instanciación de la ALU ---
+    alu_riscv rv_alu (
+    .a(alu_a),
+    .b(alu_b),
+    .out(alu_out),
+    .ctrl({is_add, is_sub, is_sll, is_slt, is_sltu, is_xor, is_srl, is_sra, is_or, is_and})
+    );
+
+    // --- Lógica de la Unidad de Control (CU) ---
+    
+    // 1. Decodificación por TIPO de instrucción (usando opcode[6:2])
+    assign is_r_instr = (opcode[6:2] == 5'b01100);
+    assign is_i_instr = (opcode[6:2] == 5'b00000) || (opcode[6:2] == 5'b00100) || (opcode[6:2] == 5'b11001);
+    assign is_s_instr = (opcode[6:2] == 5'b01000);
+    assign is_b_instr = (opcode[6:2] == 5'b11000);
+    assign is_u_instr = (opcode[6:2] == 5'b00101) || (opcode[6:2] == 5'b01101);
+    assign is_j_instr = (opcode[6:2] == 5'b11011);
+
+    // 2. Verificación de instrucción RV32I válida (bits [1:0] == 11)
+    assign is_valid   = (opcode[1:0] == 2'b11);
+
+    // El opcode para instrucciones tipo R enteras es siempre 0110011
+    assign dec_bits = {funct7[5], funct3, opcode}; 
+
+    // Decodificación de instrucciones según el estándar RISC-V (RV32I)
+    assign is_add  = (dec_bits == 11'b0_000_0110011);
+    assign is_sub  = (dec_bits == 11'b1_000_0110011);
+    assign is_sll  = (dec_bits == 11'b0_001_0110011);
+    assign is_slt  = (dec_bits == 11'b0_010_0110011);
+    assign is_sltu = (dec_bits == 11'b0_011_0110011);
+    assign is_xor  = (dec_bits == 11'b0_100_0110011);
+    assign is_srl  = (dec_bits == 11'b0_101_0110011);
+    assign is_sra  = (dec_bits == 11'b1_101_0110011);
+    assign is_or   = (dec_bits == 11'b0_110_0110011);
+    assign is_and  = (dec_bits == 11'b0_111_0110011);
+
+// 4. Señal de habilitación de escritura (Solo si es tipo R y válida)
+    assign wr_en = is_r_instr && is_valid;
+    
+endmodule
