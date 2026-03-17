@@ -1,0 +1,93 @@
+#! /foss/tools/iverilog/bin/vvp
+:ivl_version "13.0 (devel)" "(s20251012-46-gaad14df3-dirty)";
+:ivl_delay_selection "TYPICAL";
+:vpi_time_precision - 12;
+:vpi_module "/foss/tools/iverilog/lib/ivl/system.vpi";
+:vpi_module "/foss/tools/iverilog/lib/ivl/vhdl_sys.vpi";
+:vpi_module "/foss/tools/iverilog/lib/ivl/vhdl_textio.vpi";
+:vpi_module "/foss/tools/iverilog/lib/ivl/v2005_math.vpi";
+:vpi_module "/foss/tools/iverilog/lib/ivl/va_math.vpi";
+S_0x5a27c1047360 .scope module, "alu_tb" "alu_tb" 2 3;
+ .timescale -9 -12;
+v0x5a27c1071e90_0 .var "a", 31 0;
+v0x5a27c1071f70_0 .net "alu_out", 31 0, L_0x5a27c1072ce0;  1 drivers
+v0x5a27c1072040_0 .var "b", 31 0;
+v0x5a27c1072140_0 .var "op", 1 0;
+S_0x5a27c1058820 .scope module, "uut" "alu_simple" 2 12, 3 1 0, S_0x5a27c1047360;
+ .timescale 0 0;
+    .port_info 0 /INPUT 32 "a";
+    .port_info 1 /INPUT 32 "b";
+    .port_info 2 /INPUT 2 "op";
+    .port_info 3 /OUTPUT 32 "alu_out";
+L_0x5a27c1072400 .functor AND 32, v0x5a27c1071e90_0, v0x5a27c1072040_0, C4<11111111111111111111111111111111>, C4<11111111111111111111111111111111>;
+L_0x5a27c1072980 .functor OR 32, v0x5a27c1071e90_0, v0x5a27c1072040_0, C4<00000000000000000000000000000000>, C4<00000000000000000000000000000000>;
+L_0x7698ae0ec018 .functor BUFT 1, C4<00>, C4<0>, C4<0>, C4<0>;
+v0x5a27c1058a00_0 .net/2u *"_ivl_0", 1 0, L_0x7698ae0ec018;  1 drivers
+v0x5a27c10710f0_0 .net *"_ivl_10", 31 0, L_0x5a27c1072600;  1 drivers
+L_0x7698ae0ec0a8 .functor BUFT 1, C4<10>, C4<0>, C4<0>, C4<0>;
+v0x5a27c10711d0_0 .net/2u *"_ivl_12", 1 0, L_0x7698ae0ec0a8;  1 drivers
+v0x5a27c10712c0_0 .net *"_ivl_14", 0 0, L_0x5a27c1072700;  1 drivers
+v0x5a27c1071380_0 .net *"_ivl_16", 31 0, L_0x5a27c1072400;  1 drivers
+v0x5a27c10714b0_0 .net *"_ivl_18", 31 0, L_0x5a27c1072980;  1 drivers
+v0x5a27c1071590_0 .net *"_ivl_2", 0 0, L_0x5a27c1072240;  1 drivers
+v0x5a27c1071650_0 .net *"_ivl_20", 31 0, L_0x5a27c1072a20;  1 drivers
+v0x5a27c1071730_0 .net *"_ivl_22", 31 0, L_0x5a27c1072b50;  1 drivers
+v0x5a27c1071810_0 .net *"_ivl_4", 31 0, L_0x5a27c1072360;  1 drivers
+L_0x7698ae0ec060 .functor BUFT 1, C4<01>, C4<0>, C4<0>, C4<0>;
+v0x5a27c10718f0_0 .net/2u *"_ivl_6", 1 0, L_0x7698ae0ec060;  1 drivers
+v0x5a27c10719d0_0 .net *"_ivl_8", 0 0, L_0x5a27c1072510;  1 drivers
+v0x5a27c1071a90_0 .net "a", 31 0, v0x5a27c1071e90_0;  1 drivers
+v0x5a27c1071b70_0 .net "alu_out", 31 0, L_0x5a27c1072ce0;  alias, 1 drivers
+v0x5a27c1071c50_0 .net "b", 31 0, v0x5a27c1072040_0;  1 drivers
+v0x5a27c1071d30_0 .net "op", 1 0, v0x5a27c1072140_0;  1 drivers
+L_0x5a27c1072240 .cmp/eq 2, v0x5a27c1072140_0, L_0x7698ae0ec018;
+L_0x5a27c1072360 .arith/sum 32, v0x5a27c1071e90_0, v0x5a27c1072040_0;
+L_0x5a27c1072510 .cmp/eq 2, v0x5a27c1072140_0, L_0x7698ae0ec060;
+L_0x5a27c1072600 .arith/sub 32, v0x5a27c1071e90_0, v0x5a27c1072040_0;
+L_0x5a27c1072700 .cmp/eq 2, v0x5a27c1072140_0, L_0x7698ae0ec0a8;
+L_0x5a27c1072a20 .functor MUXZ 32, L_0x5a27c1072980, L_0x5a27c1072400, L_0x5a27c1072700, C4<>;
+L_0x5a27c1072b50 .functor MUXZ 32, L_0x5a27c1072a20, L_0x5a27c1072600, L_0x5a27c1072510, C4<>;
+L_0x5a27c1072ce0 .functor MUXZ 32, L_0x5a27c1072b50, L_0x5a27c1072360, L_0x5a27c1072240, C4<>;
+    .scope S_0x5a27c1047360;
+T_0 ;
+    %vpi_call 2 22 "$dumpfile", "alu_test.vcd" {0 0 0};
+    %vpi_call 2 23 "$dumpvar", 32'sb00000000000000000000000000000000, S_0x5a27c1047360 {0 0 0};
+    %vpi_call 2 26 "$display", "Iniciando simulacion..." {0 0 0};
+    %vpi_call 2 27 "$monitor", "Tiempo: %t | A: %d | B: %d | Op: %b | Resultado: %d", $time, v0x5a27c1071e90_0, v0x5a27c1072040_0, v0x5a27c1072140_0, v0x5a27c1071f70_0 {0 0 0};
+    %pushi/vec4 100, 0, 32;
+    %store/vec4 v0x5a27c1071e90_0, 0, 32;
+    %pushi/vec4 50, 0, 32;
+    %store/vec4 v0x5a27c1072040_0, 0, 32;
+    %pushi/vec4 0, 0, 2;
+    %store/vec4 v0x5a27c1072140_0, 0, 2;
+    %delay 10000, 0;
+    %pushi/vec4 1, 0, 2;
+    %store/vec4 v0x5a27c1072140_0, 0, 2;
+    %delay 10000, 0;
+    %pushi/vec4 20, 0, 32;
+    %store/vec4 v0x5a27c1071e90_0, 0, 32;
+    %pushi/vec4 80, 0, 32;
+    %store/vec4 v0x5a27c1072040_0, 0, 32;
+    %pushi/vec4 1, 0, 2;
+    %store/vec4 v0x5a27c1072140_0, 0, 2;
+    %delay 10000, 0;
+    %pushi/vec4 65535, 0, 32;
+    %store/vec4 v0x5a27c1071e90_0, 0, 32;
+    %pushi/vec4 2863311530, 0, 32;
+    %store/vec4 v0x5a27c1072040_0, 0, 32;
+    %pushi/vec4 2, 0, 2;
+    %store/vec4 v0x5a27c1072140_0, 0, 2;
+    %delay 10000, 0;
+    %pushi/vec4 3, 0, 2;
+    %store/vec4 v0x5a27c1072140_0, 0, 2;
+    %delay 10000, 0;
+    %vpi_call 2 51 "$display", "Simulacion finalizada." {0 0 0};
+    %vpi_call 2 52 "$finish" {0 0 0};
+    %end;
+    .thread T_0;
+# The file index is used to find the file name in the following table.
+:file_names 4;
+    "N/A";
+    "<interactive>";
+    "alu_tb.v";
+    "alu.v";

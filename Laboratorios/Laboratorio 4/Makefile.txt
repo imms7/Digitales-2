@@ -1,0 +1,41 @@
+# --- Configuración del Proyecto ---
+# Nombre del ejecutable de simulación
+TARGET = simulacion.vvp
+# Nombre del archivo de ondas para GTKWave
+VCD_FILE = tb_riscv.vcd
+# El módulo de testbench principal
+TOP_TB = tb_riscv.v
+
+# Lista de todos los archivos de diseño (Hardware)
+# Nota: El orden a veces importa en Icarus, pero aquí listamos todos
+SRC = alu.v \
+      register_file.v \
+      my_riscv.v \
+      mcu.v
+
+# --- Reglas de Compilación ---
+
+# La regla por defecto: compila y simula
+all: $(TARGET) run
+
+# Regla para compilar los archivos Verilog
+$(TARGET): $(TOP_TB) $(SRC)
+	@echo "Compilando archivos con Icarus Verilog..."
+	iverilog -o $(TARGET) $(TOP_TB) $(SRC)
+
+# Regla para ejecutar la simulación y generar el archivo .vcd
+run: $(TARGET)
+	@echo "Ejecutando simulación..."
+	vvp $(TARGET)
+
+# Regla para abrir GTKWave automáticamente
+wave: run
+	@echo "Abriendo GTKWave..."
+	gtkwave $(VCD_FILE) &
+
+# Regla para limpiar archivos temporales generados
+clean:
+	@echo "Limpiando archivos temporales..."
+	rm -f $(TARGET) $(VCD_FILE)
+
+.PHONY: all run wave clean
